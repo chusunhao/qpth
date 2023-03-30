@@ -16,8 +16,8 @@ class QPSolvers(Enum):
 
 
 def QPFunction(eps=1e-12, verbose=0, notImprovedLim=3,
-                 maxIter=20, solver=QPSolvers.PDIPM_BATCHED,
-                 check_Q_spd=True):
+               maxIter=20, solver=QPSolvers.PDIPM_BATCHED,
+               check_Q_spd=True):
     class QPFunctionFn(Function):
         @staticmethod
         def forward(ctx, Q_, p_, G_, h_, A_, b_):
@@ -81,12 +81,12 @@ def QPFunction(eps=1e-12, verbose=0, notImprovedLim=3,
             if check_Q_spd:
                 for i in range(nBatch):
                     e, _ = torch.eig(Q[i])
-                    if not torch.all(e[:,0] > 0):
+                    if not torch.all(e[:, 0] > 0):
                         raise RuntimeError('Q is not SPD.')
 
             _, nineq, nz = G.size()
             neq = A.size(1) if A.nelement() > 0 else 0
-            assert(neq > 0 or nineq > 0)
+            assert (neq > 0 or nineq > 0)
             ctx.neq, ctx.nineq, ctx.nz = neq, nineq, nz
 
             if solver == QPSolvers.PDIPM_BATCHED:
@@ -105,7 +105,7 @@ def QPFunction(eps=1e-12, verbose=0, notImprovedLim=3,
                     Ai, bi = (A[i], b[i]) if neq > 0 else (None, None)
                     vals[i], zhati, nui, lami, si = solvers.cvxpy.forward_single_np(
                         *[x.cpu().numpy() if x is not None else None
-                        for x in (Q[i], p[i], G[i], h[i], Ai, bi)])
+                          for x in (Q[i], p[i], G[i], h[i], Ai, bi)])
                     # if zhati[0] is None:
                     #     import IPython, sys; IPython.embed(); sys.exit(-1)
                     zhats[i] = torch.Tensor(zhati)
@@ -137,7 +137,6 @@ def QPFunction(eps=1e-12, verbose=0, notImprovedLim=3,
 
             # neq, nineq, nz = ctx.neq, ctx.nineq, ctx.nz
             neq, nineq = ctx.neq, ctx.nineq
-
 
             if solver == QPSolvers.CVXPY:
                 ctx.Q_LU, ctx.S_LU, ctx.R = pdipm_b.pre_factor_kkt(Q, G, A)
@@ -176,10 +175,10 @@ def QPFunction(eps=1e-12, verbose=0, notImprovedLim=3,
             if p_e:
                 dps = dps.mean(0)
 
-
             grads = (dQs, dps, dGs, dhs, dAs, dbs)
 
             return grads
+
     return QPFunctionFn.apply
 
 

@@ -61,7 +61,7 @@ def prof(args):
     print('qpthb = ', all_qpthb)
 
 
-def prof_instance(nz, nBatch, nTrials, cuda=True):
+def prof_instance(nz, nBatch, nTrials, cuda=False):
     nineq, neq = nz, 0
     assert(neq == 0)
     L = npr.rand(nBatch, nz, nz)
@@ -70,9 +70,9 @@ def prof_instance(nz, nBatch, nTrials, cuda=True):
     z0 = npr.randn(nBatch, nz)
     s0 = npr.rand(nBatch, nineq)
     p = npr.randn(nBatch, nz)
-    h = np.matmul(G, np.expand_dims(z0, axis=(2))).squeeze(2) + s0
+    h = np.matmul(G, np.expand_dims(z0, axis=2)).squeeze(2) + s0
     A = npr.randn(nBatch, neq, nz)
-    b = np.matmul(A, np.expand_dims(z0, axis=(2))).squeeze(2)
+    b = np.matmul(A, np.expand_dims(z0, axis=2)).squeeze(2)
 
     lm = nn.Linear(nz, nz)
 

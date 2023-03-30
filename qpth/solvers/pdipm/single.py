@@ -138,7 +138,7 @@ def pre_factor_kkt(Q, G, A):
     """ Perform all one-time factorizations and cache relevant matrix products"""
     nineq, nz, neq, _ = get_sizes(G, A)
 
-    # S = [ A Q^{-1} A^T        A Q^{-1} G^T           ]
+    # S = [ A Q^{-1} A^T        A Q^{-1} G^T          ]
     #     [ G Q^{-1} A^T        G Q^{-1} G^T + D^{-1} ]
 
     U_Q = torch.potrf(Q)

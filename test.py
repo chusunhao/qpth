@@ -22,7 +22,7 @@ import sys
 sys.path.append('..')
 import qpth
 from qpth.util import bdiag, expandParam, extract_nBatch
-import qpth.solvers.cvxpy as qp_cvxpy
+import qpth.solvers.cvxpy_ as qp_cvxpy
 
 # import qpth.solvers.pdipm.single as pdipm_s
 import qpth.solvers.pdipm.batch as pdipm_b

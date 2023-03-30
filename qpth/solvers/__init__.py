@@ -1,3 +1,3 @@
-__all__ = ['cvxpy', 'pdipm']
+__all__ = ['cvxpy_.py', 'pdipm']
 
-from . import cvxpy
+from . import cvxpy_
