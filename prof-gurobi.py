@@ -14,7 +14,7 @@ import time
 
 import torch
 
-# import gurobipy as gpy
+import gurobipy as gpy
 
 from IPython.core import ultratb
 sys.excepthook = ultratb.FormattedTB(mode='Verbose',
@@ -61,32 +61,32 @@ def prof_instance(nz, nBatch, cuda=True):
     A = npr.randn(nBatch, neq, nz)
     b = np.matmul(A, np.expand_dims(z0, axis=(2))).squeeze(2)
 
-    # zhat_g = []
-    # gurobi_time = 0.0
-    # for i in range(nBatch):
-    #     m = gpy.Model()
-    #     zhat = m.addVars(nz, lb=-gpy.GRB.INFINITY, ub=gpy.GRB.INFINITY)
+    zhat_g = []
+    gurobi_time = 0.0
+    for i in range(nBatch):
+        m = gpy.Model()
+        zhat = m.addVars(nz, lb=-gpy.GRB.INFINITY, ub=gpy.GRB.INFINITY)
 
-    #     obj = 0.0
-    #     for j in range(nz):
-    #         for k in range(nz):
-    #             obj += 0.5 * Q[i, j, k] * zhat[j] * zhat[k]
-    #         obj += p[i, j] * zhat[j]
-    #     m.setObjective(obj)
-    #     for j in range(nineq):
-    #         con = 0
-    #         for k in range(nz):
-    #             con += G[i, j, k] * zhat[k]
-    #         m.addConstr(con <= h[i, j])
-    #     m.setParam('OutputFlag', False)
-    #     start = time.time()
-    #     m.optimize()
-    #     gurobi_time += time.time() - start
-    #     t = np.zeros(nz)
-    #     for j in range(nz):
-    #         t[j] = zhat[j].x
-    # zhat_g.append(t)
-    gurobi_time = -1
+        obj = 0.0
+        for j in range(nz):
+            for k in range(nz):
+                obj += 0.5 * Q[i, j, k] * zhat[j] * zhat[k]
+            obj += p[i, j] * zhat[j]
+        m.setObjective(obj)
+        for j in range(nineq):
+            con = 0
+            for k in range(nz):
+                con += G[i, j, k] * zhat[k]
+            m.addConstr(con <= h[i, j])
+        m.setParam('OutputFlag', False)
+        start = time.time()
+        m.optimize()
+        gurobi_time += time.time() - start
+        t = np.zeros(nz)
+        for j in range(nz):
+            t[j] = zhat[j].x
+    zhat_g.append(t)
+    # gurobi_time = -1
 
     p, L, Q, G, z0, s0, h = [torch.Tensor(x) for x in [p, L, Q, G, z0, s0, h]]
     if cuda:
@@ -118,8 +118,8 @@ def prof_instance(nz, nBatch, cuda=True):
     batched_time = time.time() - start
 
     # Usually between 1e-4 and 1e-5:
-    # print('Diff between gurobi and pdipm: ',
-    #       np.linalg.norm(zhat_g[0]-zhat_b[0].cpu().numpy()))
+    print('Diff between gurobi and pdipm: ',
+          np.linalg.norm(zhat_g[0]-zhat_b[0].cpu().numpy()))
     # import IPython, sys; IPython.embed(); sys.exit(-1)
 
     # import IPython, sys; IPython.embed(); sys.exit(-1)

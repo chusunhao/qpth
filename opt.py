@@ -35,7 +35,7 @@ class OptNet(nn.Module):
         # QP params.
         self.M = Variable(torch.tril(torch.ones(nCls, nCls)))
         self.L = Parameter(torch.tril(torch.rand(nCls, nCls)))
-        self.G = Parameter(torch.Tensor(nineq, nCls).uniform_(-1))
+        self.G = Parameter(torch.Tensor(nineq, nCls).uniform_(-1, 1))
         self.z0 = Parameter(torch.zeros(nCls))
         self.s0 = Parameter(torch.ones(nineq))
 
@@ -99,6 +99,8 @@ if __name__ == "__main__":
         # parameters
         optimizer.step()
 
+    optimizer.step()
+    # %%
     plt.plot(losses)
     plt.ylabel('Cross Entropy Loss')
     plt.xlabel('Iteration')

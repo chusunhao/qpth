@@ -16,7 +16,7 @@ def lu_hack(x):
             ).unsqueeze(0).repeat(x.size(0), 1).int().cuda()
         else:
             assert False
-    return (data, pivots)
+    return data, pivots
 
 
 INACC_ERR = """
@@ -379,10 +379,10 @@ def pre_factor_kkt(Q, G, A):
         Q_LU = lu_hack(Q)
     except:
         raise RuntimeError("""
-qpth Error: Cannot perform LU factorization on Q.
-Please make sure that your Q matrix is PSD and has
-a non-zero diagonal.
-""")
+        qpth Error: Cannot perform LU factorization on Q.
+        Please make sure that your Q matrix is PSD and has
+        a non-zero diagonal.
+        """)
 
     # S = [ A Q^{-1} A^T        A Q^{-1} G^T          ]
     #     [ G Q^{-1} A^T        G Q^{-1} G^T + D^{-1} ]

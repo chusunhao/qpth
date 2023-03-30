@@ -61,7 +61,7 @@ def prof(args):
     print('qpthb = ', all_qpthb)
 
 
-def prof_instance(nz, nBatch, nTrials, cuda=False):
+def prof_instance(nz, nBatch, nTrials, cuda=True):
     nineq, neq = nz, 0
     assert(neq == 0)
     L = npr.rand(nBatch, nz, nz)
